@@ -20,7 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-public class Post implements Ownable<User> {
+public class Post implements Ownable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(updatable = false, unique = true)
@@ -41,21 +41,30 @@ public class Post implements Ownable<User> {
     private String content;
 
     @CreatedDate
+    @Column(updatable = false, nullable = false)
     private LocalDateTime createDate;
 
     @LastModifiedDate
+    @Column(nullable = false)
     private LocalDateTime modifiedDate;
 
     @CreatedBy
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(updatable = false)
-    private User owner;
+    @Column(updatable = false, nullable = false)
+    private String owner;
+
+    @ManyToOne
+    @Formula("(SELECT u FROM User u, Post p WHERE p.owner = u.username)")
+    private User writer;
 
     @Formula("(SELECT p.id FROM Post p WHERE p.id > id ORDER BY p.id asc LIMIT 1)")
     private Long after;
 
     @Formula("(SELECT p.id FROM Post p WHERE p.id < id ORDER BY p.id desc LIMIT 1)")
     private Long before;
+
+    public void setWriter(User writer) {
+        this.writer = writer;
+    }
 
     public boolean isModified() {
         return createDate != modifiedDate;
