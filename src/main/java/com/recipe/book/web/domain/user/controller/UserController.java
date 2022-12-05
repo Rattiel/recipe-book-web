@@ -1,10 +1,10 @@
-package com.recipe.book.web.domain.member.controller;
+package com.recipe.book.web.domain.user.controller;
 
 import com.recipe.book.web.domain.common.exception.FieldException;
 import com.recipe.book.web.domain.common.exception.Fieldable;
-import com.recipe.book.web.domain.member.dto.UserRegisterParameter;
-import com.recipe.book.web.domain.member.dto.UserRegisterForm;
-import com.recipe.book.web.domain.member.service.UserService;
+import com.recipe.book.web.domain.user.dto.UserRegisterParameter;
+import com.recipe.book.web.domain.user.dto.UserRegisterForm;
+import com.recipe.book.web.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;

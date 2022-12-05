@@ -1,9 +1,9 @@
 package com.recipe.book.web.domain.post;
 
-import com.recipe.book.web.domain.member.User;
+import com.recipe.book.web.domain.user.User;
+import com.recipe.book.web.domain.user.dto.UserInfo;
 import com.recipe.book.web.global.config.security.Ownable;
 import lombok.*;
-import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Formula;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -34,7 +34,7 @@ public class Post implements Ownable {
     private List<String> thumbnails;
 
     @Column(nullable = false)
-    private Integer viewsCount;
+    private Long views;
 
     @Lob
     @Column(nullable = false)
@@ -49,22 +49,15 @@ public class Post implements Ownable {
     private LocalDateTime modifiedDate;
 
     @CreatedBy
-    @Column(updatable = false, nullable = false)
-    private String owner;
-
-    @ManyToOne
-    @Formula("(SELECT u FROM User u, Post p WHERE p.owner = u.username)")
-    private User writer;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(updatable = false, nullable = false)
+    private User owner;
 
     @Formula("(SELECT p.id FROM Post p WHERE p.id > id ORDER BY p.id asc LIMIT 1)")
     private Long after;
 
     @Formula("(SELECT p.id FROM Post p WHERE p.id < id ORDER BY p.id desc LIMIT 1)")
     private Long before;
-
-    public void setWriter(User writer) {
-        this.writer = writer;
-    }
 
     public boolean isModified() {
         return createDate != modifiedDate;
@@ -75,7 +68,7 @@ public class Post implements Ownable {
                 .title(title)
                 .thumbnails(thumbnails)
                 .content(content)
-                .viewsCount(0)
+                .views(0L)
                 .build();
     }
 
@@ -87,7 +80,7 @@ public class Post implements Ownable {
     }
 
     public Post look() {
-        // this.viewsCount++;
+        this.views++;
 
         return this;
     }

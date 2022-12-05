@@ -1,9 +1,10 @@
-package com.recipe.book.web.domain.member.service;
+package com.recipe.book.web.domain.user.service;
 
 import com.recipe.book.web.domain.common.exception.FieldException;
-import com.recipe.book.web.domain.member.User;
-import com.recipe.book.web.domain.member.dto.UserRegisterParameter;
-import com.recipe.book.web.domain.member.repository.UserRepository;
+import com.recipe.book.web.domain.user.User;
+import com.recipe.book.web.domain.user.dto.UserPrinciple;
+import com.recipe.book.web.domain.user.dto.UserRegisterParameter;
+import com.recipe.book.web.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -25,15 +26,7 @@ public class DefaultUserService implements UserService {
                 () -> new UsernameNotFoundException(username)
         );
 
-        return org.springframework.security.core.userdetails.User.builder()
-                .username(user.getUsername())
-                .password(user.getPassword())
-                .disabled(false)
-                .accountExpired(false)
-                .accountLocked(false)
-                .credentialsExpired(false)
-                .roles(user.getRole().toString())
-                .build();
+        return UserPrinciple.from(user);
     }
 
     @Transactional

@@ -1,6 +1,6 @@
 package com.recipe.book.web.domain.common.controller;
 
-import com.recipe.book.web.domain.member.controller.UserController;
+import com.recipe.book.web.domain.user.controller.UserController;
 import com.recipe.book.web.domain.post.controller.PostController;
 import com.recipe.book.web.global.config.session.GetSessionUser;
 import com.recipe.book.web.global.config.session.SessionUser;

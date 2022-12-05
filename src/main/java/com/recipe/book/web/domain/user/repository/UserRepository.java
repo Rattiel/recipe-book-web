@@ -1,6 +1,6 @@
-package com.recipe.book.web.domain.member.repository;
+package com.recipe.book.web.domain.user.repository;
 
-import com.recipe.book.web.domain.member.User;
+import com.recipe.book.web.domain.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

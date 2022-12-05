@@ -1,7 +1,7 @@
 package com.recipe.book.web.global.config.security;
 
-import com.recipe.book.web.domain.member.User;
-import com.recipe.book.web.domain.member.repository.UserRepository;
+import com.recipe.book.web.domain.user.User;
+import com.recipe.book.web.domain.user.repository.UserRepository;
 import com.recipe.book.web.global.config.session.SessionUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

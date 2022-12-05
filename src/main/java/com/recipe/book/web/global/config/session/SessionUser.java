@@ -1,6 +1,6 @@
 package com.recipe.book.web.global.config.session;
 
-import com.recipe.book.web.domain.member.User;
+import com.recipe.book.web.domain.user.User;
 import lombok.Builder;
 import lombok.Getter;
 

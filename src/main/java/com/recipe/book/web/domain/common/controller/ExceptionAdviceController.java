@@ -1,6 +1,6 @@
 package com.recipe.book.web.domain.common.controller;
 
-import com.recipe.book.web.domain.member.controller.UserController;
+import com.recipe.book.web.domain.user.controller.UserController;
 import com.recipe.book.web.domain.post.controller.PostController;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;

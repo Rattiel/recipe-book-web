@@ -1,10 +1,10 @@
 package com.recipe.book.web;
 
 import com.recipe.book.web.global.config.security.UserRole;
-import com.recipe.book.web.domain.member.User;
-import com.recipe.book.web.domain.member.dto.UserRegisterForm;
-import com.recipe.book.web.domain.member.dto.UserRegisterParameter;
-import com.recipe.book.web.domain.member.repository.UserRepository;
+import com.recipe.book.web.domain.user.User;
+import com.recipe.book.web.domain.user.dto.UserRegisterForm;
+import com.recipe.book.web.domain.user.dto.UserRegisterParameter;
+import com.recipe.book.web.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;

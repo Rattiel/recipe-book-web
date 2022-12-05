@@ -1,6 +1,7 @@
-package com.recipe.book.web.domain.member;
+package com.recipe.book.web.domain.user;
 
-import com.recipe.book.web.domain.member.dto.UserRegisterParameter;
+import com.recipe.book.web.domain.user.dto.UserPrinciple;
+import com.recipe.book.web.domain.user.dto.UserRegisterParameter;
 import com.recipe.book.web.global.config.security.UserRole;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -17,7 +18,6 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@EntityListeners(AuditingEntityListener.class)
 @Table(name = "UserData")
 public class User {
     @Id
@@ -41,14 +41,6 @@ public class User {
     @Column(nullable = false)
     private UserRole role;
 
-    @CreatedDate
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createDate;
-
-    @LastModifiedDate
-    @Column(nullable = false)
-    private LocalDateTime modifiedDate;
-
     public static User register(UserRegisterParameter parameter, PasswordEncoder passwordEncoder) {
         return User.builder()
                     .username(parameter.getUsername())
@@ -56,6 +48,13 @@ public class User {
                     .nickname(parameter.getNickname())
                     .email(parameter.getEmail())
                     .role(parameter.getRole())
+                .build();
+    }
+
+    public static User from(UserPrinciple principle) {
+        return User.builder()
+                .id(principle.getId())
+                .username(principle.getUsername())
                 .build();
     }
 

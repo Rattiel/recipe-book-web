@@ -1,4 +1,4 @@
-package com.recipe.book.web.domain.member.dto;
+package com.recipe.book.web.domain.user.dto;
 
 import com.recipe.book.web.global.config.security.UserRole;
 import lombok.AccessLevel;

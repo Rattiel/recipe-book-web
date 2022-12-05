@@ -28,7 +28,8 @@
             <th:block th:unless="${post.createDate.isAfter(yesterday)}">
                 <th th:text="${#temporals.format(post.createDate, 'dd-MM')}">작성일</th>
             </th:block>
-            <td th:text="${post.viewsCount}">조회수</td>
+            <td th:text="${post.views}">조회수</td>
+            <td th:text="${post.owner.nickname}">작성자</td>
         </tr>
     </table>
 </main>

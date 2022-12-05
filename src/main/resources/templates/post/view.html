@@ -16,6 +16,8 @@
     <table th:object="${post}" border="1">
         <tr><td>제목</td><td th:text="*{title}"></td></tr>
         <tr><td>본문</td><td th:utext="*{content}"></td></tr>
+        <tr><td>본문</td><td th:utext="*{views}"></td></tr>
+        <tr><td>작성자</td><td th:utext="*{owner.nickname}"></td></tr>
         <tr>
             <td>작성일</td>
             <th:block th:if="#{*{createDate}.isAfter(${yesterday})}">

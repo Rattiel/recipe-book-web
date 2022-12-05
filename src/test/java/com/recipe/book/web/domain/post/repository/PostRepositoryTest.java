@@ -34,6 +34,6 @@ class PostRepositoryTest {
 
         Post result = postRepository.findById(postId).get();
 
-        Assertions.assertEquals(result.getViewsCount(), 1);
+        Assertions.assertEquals(result.getViews(), 1);
     }
 }
