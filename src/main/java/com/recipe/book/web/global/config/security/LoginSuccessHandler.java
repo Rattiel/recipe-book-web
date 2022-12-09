@@ -1,6 +1,7 @@
 package com.recipe.book.web.global.config.security;
 
 import com.recipe.book.web.domain.user.User;
+import com.recipe.book.web.domain.user.dto.UserPrincipal;
 import com.recipe.book.web.domain.user.repository.UserRepository;
 import com.recipe.book.web.global.config.session.SessionUser;
 import lombok.RequiredArgsConstructor;
@@ -14,14 +15,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
 @Component
 public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
-    private final UserRepository userRepository;
-
     private final HttpSession httpSession;
 
     @Override
@@ -32,19 +30,13 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
     ) throws IOException, ServletException {
         Object principal = authentication.getPrincipal();
 
-        if (principal instanceof org.springframework.security.core.userdetails.User user) {
-            Optional<User> optionalUser = userRepository.findByUsername(
-                    user.getUsername()
-            );
-
-            if (optionalUser.isPresent()) {
-                httpSession.setAttribute(SessionUser.ATTRIBUTE_NAME, SessionUser.of(optionalUser.get()));
-                super.onAuthenticationSuccess(request, response, authentication);
-                return;
-            }
+        if (principal instanceof UserPrincipal userPrincipal) {
+            httpSession.setAttribute(SessionUser.ATTRIBUTE_NAME, SessionUser.of(userPrincipal));
+            super.onAuthenticationSuccess(request, response, authentication);
+        } else {
+            log.error("올바르지 않은 principal 타입");
+            throw new RuntimeException("세션유저 등록 실패(이유: 올바르지 않은 principal 타입)");
         }
-
-        throw new RuntimeException("세션 유저 등록 실패!");
     }
 }
 

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="kr">
+<head th:replace="fragment :: head">
+    <title>레시피 북</title>
+</head>
+<body>
+<header th:replace="/fragment :: header"></header>
+<main class="d-flex flex-column justify-content-center w-100 container my-1">
+    <div class="d-flex justify-content-between w-100">
+        <h2>레시피 작성하기</h2>
+    </div>
+    <form class="w-100 mb-3" th:action="@{/recipe/new/create(page=${page}, size=${size})}" th:object="${form}" method="post">
+        <div class="mb-3">
+            <label class="form-label" for="title-input">제목</label>
+            <input class="form-control" type="text" id="title-input" th:field="*{title}">
+            <div class="invalid-feedback d-block">
+                <th:block th:if="${#fields.hasErrors('title')}" th:errors="*{title}">제목 오류</th:block>
+            </div>
+        </div>
+        <div class="mb-3">
+            <label for="thumbnail-list">썸네일</label>
+            <div id="thumbnail-list" class="d-flex flex-column">
+                <th:block th:each="thumbnail, stat : *{thumbnails}">
+                    <div class="d-flex flex-row mb-1">
+                        <input class="form-control" type="text" name="thumbnails" th:value="${thumbnail}" readonly>
+                        <button class="btn btn-danger ml-2" onclick="deleteThumbnailImage(this)">삭제</button>
+                    </div>
+                </th:block>
+            </div>
+            <div class="input-group mb-1">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">이미지 업로드</span>
+                </div>
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="thumbnail-upload-input" accept=".gif, .jpg, .png" onchange="uploadThumbnailImage(this)">
+                    <label class="custom-file-label" for="thumbnail-upload-input">이미지 선택하기</label>
+                </div>
+            </div>
+            <div class="invalid-feedback d-block">
+                <th:block th:if="${#fields.hasErrors('thumbnails')}" th:errors="*{thumbnails}">썸네일 오류</th:block>
+            </div>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="content-input">본문</label>
+            <textarea class="margin-top-20" id="content-input" th:field="*{content}"></textarea>
+            <div class="invalid-feedback d-block">
+                <th:block th:if="${#fields.hasErrors('content')}" th:errors="*{content}">본문 오류</th:block>
+            </div>
+        </div>
+        <div class="d-flex justify-content-center mb-3">
+            <input class="btn btn-primary mx-1" type="submit" value="저장">
+            <a class="btn btn-secondary mx-1" th:href="@{/recipe(page=${page}, size=${size})}">취소</a>
+        </div>
+    </form>
+</main>
+<script>
+    $(function() {
+        $('#content-input').summernote({
+            height: 500,
+            minHeight: 400,
+            maxHeight: null,
+            focus: true,
+            lang: "ko-KR",
+            placeholder: '최대 2048자까지 쓸 수 있습니다',
+            callbacks : {
+                onImageUpload : function(files, ignoredEditor, ignoredWelEditable) {
+                    for (let i = 0; i < files.length; i++) {
+                        uploadImage(files[i], this);
+                    }
+                }
+            }
+        });
+    })
+
+    function uploadImage(file, editor) {
+        const data = new FormData();
+
+        let csrfToken = document.querySelector('meta[name="_csrf"]').content;
+        let csrfParameter =  document.querySelector('meta[name="_csrf_parameterName"]').content;
+
+        data.append("file", file);
+        data.append(csrfParameter, csrfToken);
+
+        $.ajax({
+            url : "/image/upload",
+            data : data,
+            method: "POST",
+            enctype : 'multipart/form-data',
+            processData : false,
+            contentType : false,
+        }).done(function(response) {
+            $(editor).summernote('editor.insertImage', response);
+        })
+    }
+
+    function deleteThumbnailImage(e) {
+        $(e).parent().remove();
+    }
+
+    function uploadThumbnailImage(e) {
+        if (e.files[0] == null) {
+            $("#thumbnail-upload-input").val("");
+        } else {
+            const data = new FormData();
+
+            let csrfToken = document.querySelector('meta[name="_csrf"]').content;
+            let csrfParameter =  document.querySelector('meta[name="_csrf_parameterName"]').content;
+
+            data.append("file", e.files[0]);
+            data.append(csrfParameter, csrfToken);
+
+            $.ajax({
+                url : "/image/upload",
+                data : data,
+                method: "POST",
+                enctype : 'multipart/form-data',
+                processData : false,
+                contentType : false,
+            }).done(function(response) {
+                const thumbnailList = $("#thumbnail-list");
+                thumbnailList.append(
+                    "<div id=\"" + response + "\" class=\"d-flex flex-row mb-1\">" +
+                    "<input class=\"form-control\" type=\"text\" name=\"thumbnails\" value=\"" + response + "\" readonly>" +
+                    "<button class=\"btn btn-danger ml-2\" onclick=\"deleteThumbnailImage(this)\">삭제</button>" +
+                    "</div>"
+                );
+
+                $("#thumbnail-upload-input").val("");
+            })
+        }
+    }
+</script>
+</body>
+</html>

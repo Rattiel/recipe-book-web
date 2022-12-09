@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="kr">
+<head th:replace="fragment :: head">
+    <title>레시피 북</title>
+</head>
+<body>
+<header th:replace="/fragment :: header"></header>
+<main class="d-flex flex-column justify-content-center w-100 container my-1">
+    <div class="d-flex flex-row-reverse my-2">
+        <div class="d-flex flex-row">
+            <a class="btn btn-secondary mx-2" th:if="${view.after != null}" th:href="@{/recipe/{id}(id=${view.after}, page=${page}, size=${size})}">다음글</a>
+            <a class="btn btn-secondary mx-2" th:if="${view.before != null}" th:href="@{/recipe/{id}(id=${view.before}, page=${page}, size=${size})}">이전글</a>
+            <a class="btn btn-primary ms-2" th:href="@{/recipe(page=${page}, size=${size})}">목록</a>
+        </div>
+    </div>
+    <div class="mt-3" th:object="${view}">
+        <div class="row container mx-auto">
+            <div class="carousel slide col-md mb-3 mb-md-0" id="thumbnails">
+                <ol class="carousel-indicators">
+                    <li th:each="thumbnail, stat : *{thumbnails}" th:attr="data-slide-to=${stat.index}" data-target="#thumbnails" th:classappend="${stat.index == 0} ? 'active'"></li>
+                </ol>
+                <div class="carousel-inner">
+                    <div class="carousel-item" th:each="thumbnail, stat : *{thumbnails}" th:classappend="${stat.index == 0} ? 'active'">
+                        <img class="d-block w-100" style="height: 400px;" alt="..." src="" th:alt="${thumbnail}" th:src="${thumbnail}">
+                    </div>
+                </div>
+                <a class="carousel-control-prev" href="#thumbnails" data-slide="prev">
+                    <span class="carousel-control-prev-icon"></span>
+                    <span class="sr-only">Previous</span></a>
+                <a class="carousel-control-next" href="#thumbnails" data-slide="next">
+                    <span class="carousel-control-next-icon"></span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </div>
+            <div class="col-md">
+                <h5 th:text="*{title}">제목</h5>
+                <table class="table">
+                    <tbody>
+                        <tr><td>조회수</td><td th:utext="*{views}"></td></tr>
+                        <tr><td>작성자</td><td th:utext="*{owner.nickname}"></td></tr>
+                        <tr>
+                            <td>작성일</td>
+                            <th:block th:if="${view.createDate.isAfter(yesterday)}">
+                                <td class="date mx-1" th:text="${#temporals.format(view.createDate, 'HH:mm')}">작성일</td>
+                            </th:block>
+                            <th:block th:if="!${view.createDate.isAfter(yesterday)}">
+                                <td class="date mx-1" th:text="${#temporals.format(view.createDate, 'dd-MM')}">작성일</td>
+                            </th:block>
+                        </tr>
+                        <tr th:if="${editable}">
+                            <td></td>
+                            <td>
+                                <form id="delete-form" th:action="@{/recipe/{id}/delete(id=${id}, page=${page}, size=${size})}" method="post"></form>
+                                <a class="btn btn-primary ms-2" th:href="@{/recipe/{id}/update(id=${id}, page=${page}, size=${size})}">수정하기</a>
+                                <input class="btn btn-danger mx-1" type="button" value="삭제하기" onclick="del()">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <hr class="mx-2">
+        <div class="row mb-5">
+            <div class="w-100 ml-5 mr-5" style="overflow-x: hidden" th:utext="*{content}">본문</div>
+        </div>
+    </div>
+</main>
+<script>
+    function del() {
+        document.getElementById("delete-form").submit();
+    }
+</script>
+</body>
+</html>

@@ -2,7 +2,7 @@ package com.recipe.book.web.domain.user.service;
 
 import com.recipe.book.web.domain.common.exception.FieldException;
 import com.recipe.book.web.domain.user.User;
-import com.recipe.book.web.domain.user.dto.UserPrinciple;
+import com.recipe.book.web.domain.user.dto.UserPrincipal;
 import com.recipe.book.web.domain.user.dto.UserRegisterParameter;
 import com.recipe.book.web.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ public class DefaultUserService implements UserService {
                 () -> new UsernameNotFoundException(username)
         );
 
-        return UserPrinciple.from(user);
+        return UserPrincipal.from(user);
     }
 
     @Transactional

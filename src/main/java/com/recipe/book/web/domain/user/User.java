@@ -1,16 +1,15 @@
 package com.recipe.book.web.domain.user;
 
-import com.recipe.book.web.domain.user.dto.UserPrinciple;
+import com.recipe.book.web.domain.recommendation.Recommendation;
+import com.recipe.book.web.domain.user.dto.UserInfo;
+import com.recipe.book.web.domain.user.dto.UserPrincipal;
 import com.recipe.book.web.domain.user.dto.UserRegisterParameter;
 import com.recipe.book.web.global.config.security.UserRole;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 @Getter
@@ -19,7 +18,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @Entity
 @Table(name = "UserData")
-public class User {
+public class User implements UserInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, unique = true, updatable = false)
@@ -41,6 +40,9 @@ public class User {
     @Column(nullable = false)
     private UserRole role;
 
+    @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Recommendation> recommendations;
+
     public static User register(UserRegisterParameter parameter, PasswordEncoder passwordEncoder) {
         return User.builder()
                     .username(parameter.getUsername())
@@ -51,7 +53,7 @@ public class User {
                 .build();
     }
 
-    public static User from(UserPrinciple principle) {
+    public static User from(UserPrincipal principle) {
         return User.builder()
                 .id(principle.getId())
                 .username(principle.getUsername())

@@ -27,12 +27,13 @@ public class SecurityConfig {
 				.authorizeRequests(authorizeRequests ->
 						authorizeRequests
 								.mvcMatchers("/css/**", "/js/**", "/library/**").permitAll()
-								.mvcMatchers("/fragment").hasRole(UserRole.DEVELOPER.toString())
-								.mvcMatchers("/h2-console/**").hasRole(UserRole.DEVELOPER.toString())
+								.mvcMatchers("/fragment").hasAnyRole(UserRole.DEVELOPER.toString(), UserRole.ADMIN.toString())
+								.mvcMatchers("/h2-console/**").hasAnyRole(UserRole.DEVELOPER.toString(), UserRole.ADMIN.toString())
 								.mvcMatchers("/image/upload/*/*/*/*").permitAll()
 								.mvcMatchers("/image/upload").authenticated()
 								.mvcMatchers("/login", "/register", "/logout").permitAll()
-								.mvcMatchers("/post/new/create", "/post/*/update", "/post/*/remove").authenticated()
+								.mvcMatchers("/recipe/new/create", "/recipe/*/update", "/recipe/*/remove").authenticated()
+								.mvcMatchers("/", "/recipe", "/recipe/*").permitAll()
 								.anyRequest().authenticated()
 				).formLogin(formLogin ->
 						formLogin

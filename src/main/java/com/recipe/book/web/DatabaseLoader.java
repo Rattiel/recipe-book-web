@@ -43,7 +43,7 @@ public class DatabaseLoader implements ApplicationRunner {
                     .email(ADMIN_EMAIL)
                     .build();
 
-            User admin = User.register(UserRegisterParameter.from(adminMemberRegisterForm, UserRole.DEVELOPER), passwordEncoder);
+            User admin = User.register(UserRegisterParameter.from(adminMemberRegisterForm, UserRole.ADMIN), passwordEncoder);
 
             memberRepository.save(admin);
 
