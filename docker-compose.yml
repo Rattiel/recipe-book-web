@@ -21,8 +21,8 @@ services:
       - MYSQL_DATABASE=web
       - TZ=Asia/Seoul
     volumes:
-      - /web/mariadb/data:/var/lib/mysql
-      - /web/mariadb/config:/etc/mysql/conf.d
+      - ./service/mariadb/data:/var/lib/mysql
+      - ./service/mariadb/config:/etc/mysql/conf.d
 
   redis:
     image: redis
@@ -41,4 +41,4 @@ services:
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: 1234
     volumes:
-      - /web/server/img:/image/upload
+      - ./service/server/img:/image/upload
