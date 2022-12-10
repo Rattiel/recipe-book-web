@@ -6,35 +6,34 @@
 <body>
 <header th:replace="fragment :: header"></header>
 <main class="d-flex flex-column justify-content-center w-100 container my-1">
-    <div class="d-flex flex-row-reverse my-2">
+    <div class="mb-3 mt-2">
+        <h3 class="mb-4">주간 추천 레시피</h3>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">번호</th>
+                <th scope="col">제목</th>
+                <th scope="col">작성일</th>
+                <th scope="col">작성자</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="preview : ${top5PreviewList}" th:attr="data-href=@{/recipe/{id}(id=${preview.id}, page=${page}, size=${size})}">
+                <th scope="row" th:text="${preview.id}"></th>
+                <td th:text="${preview.title}"></td>
+                <th:block th:if="${preview.createDate.isAfter(yesterday)}">
+                    <th th:text="${#temporals.format(preview.createDate, 'HH:mm')}">작성일</th>
+                </th:block>
+                <th:block th:unless="${preview.createDate.isAfter(yesterday)}">
+                    <th th:text="${#temporals.format(preview.createDate, 'dd-MM')}">작성일</th>
+                </th:block>
+                <td th:text="${preview.writer.nickname}">작성자</td>
+            </tr>
+        </table>
+    </div>
+    <div class="d-flex flex-row-reverse mb-3">
         <a sec:authorize="isAuthenticated()" class="btn btn-primary mr-3" th:href="@{/recipe/new/create(page=${page}, size=${size})}">레시피 작성하기</a>
     </div>
-    <!--
-    <table class="table">
-        <thead>
-        <tr>
-            <th scope="col">번호</th>
-            <th scope="col">제목</th>
-            <th scope="col">등록일</th>
-            <th scope="col">조회수</th>
-            <th scope="col">작성자</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="preview : ${previewList}" th:attr="data-href=@{/recipe/{id}(id=${preview.id}, page=${page}, size=${size})}">
-            <th scope="row" th:text="${preview.id}"></th>
-            <td th:text="${preview.title}"></td>
-            <th:block th:if="${preview.createDate.isAfter(yesterday)}">
-                <th th:text="${#temporals.format(preview.createDate, 'HH:mm')}">작성일</th>
-            </th:block>
-            <th:block th:unless="${preview.createDate.isAfter(yesterday)}">
-                <th th:text="${#temporals.format(preview.createDate, 'dd-MM')}">작성일</th>
-            </th:block>
-            <td th:text="${preview.views}">조회수</td>
-            <td th:text="${preview.owner.nickname}">작성자</td>
-        </tr>
-    </table>
-    -->
     <div class="container mb-3">
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3">
             <div class="col" th:each="preview : ${previewList}">
@@ -42,13 +41,13 @@
                     <a th:href="@{/recipe/{id}(id=${preview.id}, page=${page}, size=${size})}">
                         <img class="bd-placeholder-img card-img-top" style="width:100%; height:225px;" th:src="${preview.thumbnails[0]}">
                         <div class="card-body">
-                            <p class="card-text" th:text="${preview.title}">제목</p>
-                            <p class="card-text" th:text="${preview.owner.nickname}">작성자</p>
+                            <p class="my-1" th:text="${preview.title}">제목</p>
+                            <p class="my-1" th:text="${preview.writer.nickname}">작성자</p>
                             <th:block th:if="${preview.createDate.isAfter(yesterday)}">
-                                <td class="date mx-1" th:text="${#temporals.format(preview.createDate, 'HH:mm')}">작성일</td>
+                                <p class="my-1" th:text="${#temporals.format(preview.createDate, 'HH:mm')}">작성일</p>
                             </th:block>
                             <th:block th:if="!${preview.createDate.isAfter(yesterday)}">
-                                <td class="date mx-1" th:text="${#temporals.format(preview.createDate, 'dd-MM')}">작성일</td>
+                                <p class="my-1" th:text="${#temporals.format(preview.createDate, 'dd-MM')}">작성일</p>
                             </th:block>
                         </div>
                     </a>
@@ -70,7 +69,6 @@
         </ul>
     </nav>
 </main>
-<!--
 <script>
     $(document).ready(function(){
         $('table tbody tr').click(function(){
@@ -79,6 +77,5 @@
         });
     });
 </script>
--->
 </body>
 </html>

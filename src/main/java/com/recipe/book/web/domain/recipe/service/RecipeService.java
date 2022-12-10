@@ -15,7 +15,9 @@ public interface RecipeService {
 
     void delete(long id);
 
-    Page<RecipePreview> findPageByPageable(Pageable pageable);
+    Page<RecipePreview> findPreviewPageByPageable(Pageable pageable);
+
+    List<RecipePreview> findPreviewListByTop5InWeek();
 
     RecipeData findDataById(long id);
 

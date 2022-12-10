@@ -6,12 +6,17 @@ import com.recipe.book.web.global.config.security.Ownable;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface RecipePreview extends Ownable<UserInfo> {
+public interface RecipePreview extends Ownable {
     Long getId();
+
     String getTitle();
+
     List<String> getThumbnails();
-    String getViews();
+
     @Override
-    UserInfo getOwner();
+    String getPrincipalName();
+
+    UserInfo getWriter();
+
     LocalDateTime getCreateDate();
 }

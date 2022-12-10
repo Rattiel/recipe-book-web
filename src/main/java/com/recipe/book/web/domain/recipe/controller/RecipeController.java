@@ -5,6 +5,7 @@ import com.recipe.book.web.domain.recipe.dto.*;
 import com.recipe.book.web.domain.recipe.exception.RecipeNotFoundException;
 import com.recipe.book.web.domain.recipe.exception.RecipePasswordIncorrectException;
 import com.recipe.book.web.domain.recipe.service.RecipeService;
+import com.recipe.book.web.domain.recommendation.service.RecommendationService;
 import com.recipe.book.web.domain.user.dto.UserPrincipal;
 import com.recipe.book.web.global.config.security.Ownable;
 import com.recipe.book.web.global.config.security.UserRole;
@@ -14,7 +15,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RequestMapping("/recipe")
@@ -32,6 +33,8 @@ public class RecipeController {
     private final static int MAX_NAV_ITEM = 5;
 
     private final RecipeService recipeService;
+
+    private final RecommendationService recommendationService;
 
     @ExceptionHandler({RecipeNotFoundException.class})
     public String redirectIndex() {
@@ -145,9 +148,12 @@ public class RecipeController {
             @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
             Model model
     ) {
-        Page<RecipePreview> postPreviewPage = recipeService.findPageByPageable(pageable);
-        bindPreviewPage(postPreviewPage, model);
-        bindPageNavBar(postPreviewPage, model);
+        Page<RecipePreview> recipePreviewPage = recipeService.findPreviewPageByPageable(pageable);
+        bindPreviewPage(recipePreviewPage, model);
+        bindPageNavBar(recipePreviewPage, model);
+
+        List<RecipePreview> top5RecipePreviewList = recipeService.findPreviewListByTop5InWeek();
+        bindTop5PreviewPage(top5RecipePreviewList, model);
 
         return "recipe/list";
     }
@@ -158,22 +164,28 @@ public class RecipeController {
             Model model,
             @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
-        RecipeView post = recipeService.findById(id);
-        bindView(post, model);
-        bindEditable(post, userPrincipal, model);
+        RecipeView recipe = recipeService.findById(id);
+        bindView(recipe, model);
+        bindEditable(recipe, userPrincipal, model);
+        bindRecommended(id, userPrincipal, model);
 
         return "recipe/view";
     }
 
-    private void bindEditable(Ownable<?> post, UserPrincipal details, Model model) {
+    private void bindEditable(Ownable recipe, UserPrincipal details, Model model) {
         if (details == null) {
             model.addAttribute("editable", false);
         } else if (details.getRole().equals(UserRole.ADMIN)) {
             model.addAttribute("editable", true);
         } else {
-            boolean editable = post.getOwner().getUsername().equals(details.getUsername());
+            boolean editable = recipe.getPrincipalName().equals(details.getUsername());
             model.addAttribute("editable", editable);
         }
+    }
+
+    private void bindRecommended(long recipeId, UserPrincipal details, Model model) {
+        boolean recommended = recommendationService.isRecommended(recipeId, details);
+        model.addAttribute("recommended", recommended);
     }
 
     private void bindCreateForm(Model model) {
@@ -188,6 +200,10 @@ public class RecipeController {
 
     private void bindPreviewPage(Page<RecipePreview> previewList, Model model) {
         model.addAttribute("previewList", previewList);
+    }
+
+    private void bindTop5PreviewPage(List<RecipePreview> top5PreviewList, Model model) {
+        model.addAttribute("top5PreviewList", top5PreviewList);
     }
 
     private void bindPageNavBar(Page<?> page, Model model) {

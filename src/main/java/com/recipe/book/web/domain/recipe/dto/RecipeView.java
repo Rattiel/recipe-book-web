@@ -6,7 +6,7 @@ import com.recipe.book.web.global.config.security.Ownable;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface RecipeView extends Ownable<UserInfo> {
+public interface RecipeView extends Ownable {
     Long getId();
 
     String getTitle();
@@ -18,13 +18,11 @@ public interface RecipeView extends Ownable<UserInfo> {
     Long getViews();
 
     @Override
-    UserInfo getOwner();
+    String getPrincipalName();
+
+    UserInfo getWriter();
 
     LocalDateTime getCreateDate();
-
-    LocalDateTime getModifiedDate();
-
-    Boolean getRecommended();
 
     Long getRecommendationCount();
 

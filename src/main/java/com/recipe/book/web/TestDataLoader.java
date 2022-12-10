@@ -31,7 +31,7 @@ import java.util.Optional;
 public class TestDataLoader implements ApplicationRunner {
     private final UserRepository memberRepository;
     private static final String ADMIN_USERNAME = "admin";
-    private static final String THUMBNAIL_SRC = "";
+    private static final String THUMBNAIL_SRC = "https://www.adobe.com/kr/creativecloud/photography/hub/guides/media_1c392a98f2281a1235acca903ce9d62339fa138c1.jpeg?width=2000&format=webply&optimize=medium";
 
     private final RecipeRepository recipeRepository;
 
@@ -48,8 +48,8 @@ public class TestDataLoader implements ApplicationRunner {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        for (int i = 0; i < 500; i++) {
-            Recipe recipe = Recipe.create("테스트 " + i, Collections.singletonList(THUMBNAIL_SRC), "테스트 본문 "  + i);
+        for (int i = 0; i < 60; i++) {
+            Recipe recipe = Recipe.create("레시피 제목" + (i + 1), admin, Collections.singletonList(THUMBNAIL_SRC), "레시피 본문 "  + (i + 1));
 
             recipeRepository.save(recipe);
         }

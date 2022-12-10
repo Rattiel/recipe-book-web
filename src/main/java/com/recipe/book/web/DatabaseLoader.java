@@ -48,6 +48,20 @@ public class DatabaseLoader implements ApplicationRunner {
             memberRepository.save(admin);
 
             log.info("새로 생성된 관리자 계정 (아이디 : {}, 비밀번호 : {})", ADMIN_USERNAME, ADMIN_PASSWORD);
+
+            User test = User.register(UserRegisterParameter.from(
+                    UserRegisterForm.builder()
+                            .username("test")
+                            .password(ADMIN_PASSWORD)
+                            .nickname("테스트 유저1")
+                            .email("test@mail.com")
+                            .build(),
+                            UserRole.USER
+                    ),
+                    passwordEncoder
+            );
+
+            memberRepository.save(test);
         }
     }
 }

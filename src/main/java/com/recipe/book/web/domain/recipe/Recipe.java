@@ -7,7 +7,6 @@ import lombok.*;
 import org.hibernate.annotations.Formula;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -20,7 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-public class Recipe implements Ownable<User> {
+public class Recipe implements Ownable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(updatable = false, unique = true)
@@ -44,33 +43,61 @@ public class Recipe implements Ownable<User> {
     @Column(updatable = false, nullable = false)
     private LocalDateTime createDate;
 
-    @LastModifiedDate
-    @Column(nullable = false)
-    private LocalDateTime modifiedDate;
-
-    @Formula("(SELECT count(*) > 0 FROM Recommendation r WHERE r.owner_id = owner_id)")
-    private Boolean recommended;
-
-    @Formula("(SELECT count(*) FROM Recommendation rec WHERE rec.recipe_id = id)")
+    @Formula(
+            "(" +
+                    "SELECT count(*) " +
+                    "FROM Recommendation rec " +
+                    "WHERE rec.recipe_id = id" +
+            ")"
+    )
     private Long recommendationCount;
 
-    @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(
+            mappedBy = "recipe",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     private List<Recommendation> recommendations;
 
-    @CreatedBy
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(updatable = false, nullable = false)
-    private User owner;
+    private User writer;
 
-    @Formula("(SELECT r.id FROM Recipe r WHERE r.id > id ORDER BY r.id asc LIMIT 1)")
+    @CreatedBy
+    @Column(updatable = false, nullable = false)
+    private String principalName;
+
+    @Formula(
+            "(" +
+                    "SELECT r.id " +
+                    "FROM Recipe r " +
+                    "WHERE r.id > id " +
+                    "ORDER BY r.id asc LIMIT 1" +
+            ")"
+    )
     private Long after;
 
-    @Formula("(SELECT r.id FROM Recipe r WHERE r.id < id ORDER BY r.id desc LIMIT 1)")
+    @Formula(
+            "(" +
+                    "SELECT r.id " +
+                    "FROM Recipe r " +
+                    "WHERE r.id < id " +
+                    "ORDER BY r.id desc LIMIT 1" +
+            ")"
+    )
     private Long before;
 
-    public static Recipe create(String title, List<String> thumbnails, String content) {
+    public static Recipe withId(Long id) {
+        return Recipe.builder()
+                .id(id)
+                .build();
+    }
+
+    public static Recipe create(String title, User writer, List<String> thumbnails, String content) {
         return Recipe.builder()
                 .title(title)
+                .writer(writer)
                 .thumbnails(thumbnails)
                 .content(content)
                 .views(0L)
