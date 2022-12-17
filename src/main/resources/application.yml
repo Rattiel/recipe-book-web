@@ -1,6 +1,6 @@
 image:
   upload:
-    save: /image/upload
+    save: image/upload
 
 server:
   error:
@@ -39,6 +39,12 @@ spring:
 
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
+
+#  datasource:
+#    driver-class-name: org.h2.Driver  #h2 드라이버 설정
+#    url: jdbc:h2:mem:test  #접속 URL
+#    username: test
+#    password: 1234
 
   devtools:
     livereload:

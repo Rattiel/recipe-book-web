@@ -1,5 +1,6 @@
 package com.recipe.book.web.domain.recipe.dto;
 
+import com.recipe.book.web.domain.comment.dto.CommentView;
 import com.recipe.book.web.domain.user.dto.UserInfo;
 import com.recipe.book.web.global.config.security.Ownable;
 
@@ -16,6 +17,10 @@ public interface RecipeView extends Ownable {
     String getContent();
 
     Long getViews();
+
+    List<CommentView> getCommentList();
+
+    Long getCommentCount();
 
     @Override
     String getPrincipalName();

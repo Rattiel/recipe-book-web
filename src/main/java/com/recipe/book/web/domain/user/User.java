@@ -39,9 +39,6 @@ public class User implements UserInfo {
     @Column(nullable = false)
     private UserRole role;
 
-    @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Recommendation> recommendations;
-
     public static User register(UserRegisterParameter parameter, PasswordEncoder passwordEncoder) {
         return User.builder()
                     .username(parameter.getUsername())

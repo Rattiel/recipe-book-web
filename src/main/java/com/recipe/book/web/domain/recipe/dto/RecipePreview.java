@@ -19,4 +19,8 @@ public interface RecipePreview extends Ownable {
     UserInfo getWriter();
 
     LocalDateTime getCreateDate();
+
+    Long getCommentCount();
+
+    Long getRecommendationCount();
 }

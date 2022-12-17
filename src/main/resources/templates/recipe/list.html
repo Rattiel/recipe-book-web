@@ -11,23 +11,27 @@
         <table class="table">
             <thead>
             <tr>
-                <th scope="col">번호</th>
+                <th class="d-none d-sm-table-cell" scope="col">번호</th>
                 <th scope="col">제목</th>
-                <th scope="col">작성일</th>
-                <th scope="col">작성자</th>
+                <th scope="col">추천수</th>
+                <th class="d-none d-sm-table-cell" scope="col">댓글수</th>
+                <th class="d-none d-sm-table-cell" scope="col">작성자</th>
+                <th class="d-none d-sm-table-cell" scope="col">작성일</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="preview : ${top5PreviewList}" th:attr="data-href=@{/recipe/{id}(id=${preview.id}, page=${page}, size=${size})}">
-                <th scope="row" th:text="${preview.id}"></th>
+                <th class="d-none d-sm-table-cell"  scope="row" th:text="${preview.id}"></th>
                 <td th:text="${preview.title}"></td>
+                <td th:text="${preview.recommendationCount}">추천수</td>
+                <td class="d-none d-sm-table-cell"  th:text="${preview.commentCount}">댓글수</td>
+                <td class="d-none d-sm-table-cell"  th:text="${preview.writer.nickname}">작성자</td>
                 <th:block th:if="${preview.createDate.isAfter(yesterday)}">
-                    <th th:text="${#temporals.format(preview.createDate, 'HH:mm')}">작성일</th>
+                    <th class="d-none d-sm-table-cell"  th:text="${#temporals.format(preview.createDate, 'HH:mm')}">작성일</th>
                 </th:block>
                 <th:block th:unless="${preview.createDate.isAfter(yesterday)}">
-                    <th th:text="${#temporals.format(preview.createDate, 'dd-MM')}">작성일</th>
+                    <th class="d-none d-sm-table-cell"  th:text="${#temporals.format(preview.createDate, 'dd-MM')}">작성일</th>
                 </th:block>
-                <td th:text="${preview.writer.nickname}">작성자</td>
             </tr>
         </table>
     </div>
@@ -58,7 +62,7 @@
     <nav class="d-flex align-self-center mb-3">
         <ul class="pagination">
             <li class="page-item" th:if="${showBeforeNav}">
-                <a th:class="page-link" th:href="@{/recipe(page=${navStartPage - 1}, size=${size})}" >이전</a>
+                <a th:class="page-link" th:href="@{/recipe(page=${navStartPage - 1}, size=${size})}">이전</a>
             </li>
             <li th:each="navPage : ${#numbers.sequence(navStartPage, navLastPage)}" th:class="page-item" th:classappend="${navPage == pageNumber} ? 'active'">
                 <a class="page-link" th:text="${navPage}" th:href="@{/recipe(page=${navPage}, size=${size})}"></a>

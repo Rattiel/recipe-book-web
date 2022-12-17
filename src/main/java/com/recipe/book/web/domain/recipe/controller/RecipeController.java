@@ -3,11 +3,11 @@ package com.recipe.book.web.domain.recipe.controller;
 import com.recipe.book.web.domain.common.exception.Fieldable;
 import com.recipe.book.web.domain.recipe.dto.*;
 import com.recipe.book.web.domain.recipe.exception.RecipeNotFoundException;
-import com.recipe.book.web.domain.recipe.exception.RecipePasswordIncorrectException;
 import com.recipe.book.web.domain.recipe.service.RecipeService;
 import com.recipe.book.web.domain.recommendation.service.RecommendationService;
 import com.recipe.book.web.domain.user.dto.UserPrincipal;
 import com.recipe.book.web.global.config.security.Ownable;
+import com.recipe.book.web.global.config.security.SecurityUtil;
 import com.recipe.book.web.global.config.security.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -35,6 +35,8 @@ public class RecipeController {
     private final RecipeService recipeService;
 
     private final RecommendationService recommendationService;
+
+    private final SecurityUtil securityUtil;
 
     @ExceptionHandler({RecipeNotFoundException.class})
     public String redirectIndex() {
@@ -109,24 +111,19 @@ public class RecipeController {
             return "recipe/update";
         }
 
-        try {
-            long postId = recipeService.update(
-                    id,
-                    form.getTitle(),
-                    form.getThumbnails(),
-                    form.getContent()
-            );
+        long postId = recipeService.update(
+                id,
+                form.getTitle(),
+                form.getThumbnails(),
+                form.getContent()
+        );
 
-            return String.format(
-                    "redirect:/recipe/%d?page=%d&size=%d",
-                    postId,
-                    pageable.getPageNumber(),
-                    pageable.getPageSize()
-            );
-        } catch (RecipePasswordIncorrectException e) {
-            bindFieldError(bindingResult, e);
-            return "recipe/update";
-        }
+        return String.format(
+                "redirect:/recipe/%d?page=%d&size=%d",
+                postId,
+                pageable.getPageNumber(),
+                pageable.getPageSize()
+        );
     }
 
     @PostMapping("/{id}/delete")
@@ -166,21 +163,15 @@ public class RecipeController {
     ) {
         RecipeView recipe = recipeService.findById(id);
         bindView(recipe, model);
-        bindEditable(recipe, userPrincipal, model);
+        bindEditable(recipe, model);
         bindRecommended(id, userPrincipal, model);
 
         return "recipe/view";
     }
 
-    private void bindEditable(Ownable recipe, UserPrincipal details, Model model) {
-        if (details == null) {
-            model.addAttribute("editable", false);
-        } else if (details.getRole().equals(UserRole.ADMIN)) {
-            model.addAttribute("editable", true);
-        } else {
-            boolean editable = recipe.getPrincipalName().equals(details.getUsername());
-            model.addAttribute("editable", editable);
-        }
+    private void bindEditable(Ownable recipe, Model model) {
+        boolean editable = securityUtil.checkEditable(recipe);
+        model.addAttribute("editable", editable);
     }
 
     private void bindRecommended(long recipeId, UserPrincipal details, Model model) {

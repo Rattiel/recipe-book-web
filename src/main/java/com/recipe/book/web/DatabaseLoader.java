@@ -66,7 +66,7 @@ public class DatabaseLoader implements ApplicationRunner {
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            for (int i = 0; i < 60; i++) {
+            for (int i = 0; i < 150; i++) {
                 Recipe recipe = Recipe.create("레시피 제목" + (i + 1), admin, Collections.singletonList(THUMBNAIL_SRC), "레시피 본문 "  + (i + 1));
 
                 recipeRepository.save(recipe);

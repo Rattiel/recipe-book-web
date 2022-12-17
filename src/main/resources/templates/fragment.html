@@ -34,28 +34,14 @@
         <div class="collapse navbar-collapse" id="navbar">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
-                    <!--<a class="nav-link nav-link-size" th:href="@{/recipe}">레시피 목록</a>-->
                 </li>
             </ul>
 
             <div class="btn-group" sec:authorize="isAuthenticated()">
                 <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" data-display="static" aria-expanded="false" th:text="${user.nickname} + | 님|">사용자 이름</button>
                 <div class="dropdown-menu dropdown-menu-left dropdown-menu-md-right p-2 text-muted text-left">
-                    <!--
-                    <th:block sec:authorize="hasRole('DEVELOPER') || hasRole('ADMIN')">
-                        <p>개발자 메뉴</p>
-                        <a class="dropdown-item" th:href="@{/h2-console}">db 콘솔</a>
-                        <hr class="dropdown-divider">
-                    </th:block>
-                    <th:block sec:authorize="hasRole('ADMIN')">
-                        <p>관리자 메뉴</p>
-                        <hr class="dropdown-divider">
-                        <p>사용자 메뉴</p>
-                    </th:block>
-                    <a class="dropdown-item" th:href="@{/profile}">내 프로필</a>
-                    -->
                     <hr class="dropdown-divider">
-                    <form class="dropdown-item" action="/logout" method="post">
+                    <form class="dropdown-item" action="/logout" th:action="@{/logout(redirectUri=${#httpServletRequest.requestURI})}" method="post">
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                         <input class="dropdown-item" type="submit" value="로그아웃">
                     </form>
@@ -63,7 +49,7 @@
             </div>
 
             <div class="text-end" sec:authorize="isAnonymous()">
-                <a class="btn btn-outline-primary mr-2" href="/login">로그인</a>
+                <a class="btn btn-outline-primary mr-2" th:href="@{/login}" href="/login">로그인</a>
                 <a class="btn btn-primary" href="/register">회원 가입</a>
             </div>
         </div>

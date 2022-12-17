@@ -24,15 +24,10 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
     @EntityGraph(attributePaths = {"writer"}, type = EntityGraph.EntityGraphType.LOAD)
     Page<RecipePreview> findAllPreviewBy(Pageable pageable);
 
-    @AccessOwnerAndAdmin
-    @EntityGraph(attributePaths = {"writer"}, type = EntityGraph.EntityGraphType.LOAD)
-    @Override
-    Optional<Recipe> findById(Long id);
-
     @Override
     boolean existsById(Long id);
 
-    @EntityGraph(attributePaths = {"writer"}, type = EntityGraph.EntityGraphType.LOAD)
+    @EntityGraph(attributePaths = {"writer", "commentList"}, type = EntityGraph.EntityGraphType.LOAD)
     Optional<RecipeView> findViewById(Long id);
 
     @AccessOwnerAndAdmin

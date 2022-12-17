@@ -9,6 +9,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
 import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
 
 @Slf4j
@@ -20,7 +22,9 @@ import org.springframework.security.web.header.writers.frameoptions.XFrameOption
 		jsr250Enabled = true
 )
 public class SecurityConfig {
-	private final LoginSuccessHandler loginSuccessHandler;
+	private final SessionLoginSuccessHandler loginSuccessHandler;
+
+	private final LogoutSuccessHandler logoutSuccessHandler;
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
@@ -40,6 +44,7 @@ public class SecurityConfig {
 								.mvcMatchers("/login", "/register", "/logout").permitAll()
 								.mvcMatchers("/recipe/new/create", "/recipe/*/update", "/recipe/*/delete").authenticated()
 								.mvcMatchers("/recipe/*/recommendation/create", "/recipe/*/recommendation/delete").authenticated()
+								.mvcMatchers("/recipe/*/comment/new/create", "/recipe/*/comment/*/update", "/recipe/*/comment/*/delete").authenticated()
 								.mvcMatchers("/", "/recipe", "/recipe/*").permitAll()
 								.anyRequest().denyAll()
 				).formLogin(formLogin ->
@@ -51,7 +56,7 @@ public class SecurityConfig {
 				).logout(logout ->
 						logout
 								.logoutUrl("/logout")
-								.logoutSuccessUrl("/login?logout")
+								.logoutSuccessHandler(logoutSuccessHandler)
 								.invalidateHttpSession(true)
 								.permitAll()
 				).headers(headers ->

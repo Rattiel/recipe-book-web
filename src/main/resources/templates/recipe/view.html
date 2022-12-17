@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="kr">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="kr">
 <head th:replace="fragment :: head">
     <title>레시피 북</title>
 </head>
@@ -47,16 +47,17 @@
                                 <td class="date" th:text="${#temporals.format(view.createDate, 'dd-MM')}">작성일</td>
                             </th:block>
                         </tr>
+                        <tr><td>댓글수</td><td th:utext="*{commentCount}"></td></tr>
                         <tr><td>추천수</td><td th:utext="*{recommendationCount}"></td></tr>
                         <tr>
                             <td></td>
                             <td class="container">
                                 <div class="row">
-                                    <th:block th:if="!${recommended}">
-                                        <a class="btn btn-primary mr-2 mb-2" th:href="@{/recipe/{id}/recommendation/create(id=${id}, page=${page}, size=${size})}">추천하기</a>
-                                    </th:block>
                                     <th:block th:if="${recommended}">
                                         <a class="btn btn-primary mr-2 mb-2" th:href="@{/recipe/{id}/recommendation/delete(id=${id}, page=${page}, size=${size})}">추천 취소하기</a>
+                                    </th:block>
+                                    <th:block th:unless="${recommended}">
+                                        <a class="btn btn-primary mr-2 mb-2" th:href="@{/recipe/{id}/recommendation/create(id=${id}, page=${page}, size=${size})}">추천하기</a>
                                     </th:block>
                                     <th:block th:if="${editable}">
                                         <form id="delete-form" th:action="@{/recipe/{id}/delete(id=${id}, page=${page}, size=${size})}" method="post"></form>
@@ -74,11 +75,92 @@
         <div class="row mb-5">
             <div class="w-100 ml-5 mr-5" style="overflow-x: hidden" th:utext="*{content}">본문</div>
         </div>
+        <hr class="mx-2">
+        <h5 class="ml-2">댓글들</h5>
+        <hr class="mx-2">
+        <div class="card w-100 mb-1" th:each="comment : *{commentList}" th:id="|comment-| + ${comment.id}">
+            <th:block>
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${comment.writer.nickname}">사용자 이름</h5>
+
+                    <div class="d-block" th:id="|comment-|+${comment.id}+|-view|" >
+                        <div class="container">
+                            <div class="row justify-content-between">
+                                <p class="card-text" th:text="${comment.content}">댓글 내용</p>
+                                <th:block th:if="${comment.createDate.isAfter(yesterday)}">
+                                    <p th:text="${#temporals.format(comment.createDate, 'HH:mm')}">작성일</p>
+                                </th:block>
+                                <th:block th:unless="${comment.createDate.isAfter(yesterday)}">
+                                    <p th:text="${#temporals.format(comment.createDate, 'dd-MM')}">작성일</p>
+                                </th:block>
+                            </div>
+                        </div>
+                        <div class="container" th:if="${@securityUtil.checkEditable(comment)}">
+                            <div class="row">
+                                <th:block>
+                                    <input class="btn btn-secondary mr-2" type="button" value="수정하기" onclick="showCommentEditor(0)" th:onclick="|showCommentEditor(| + ${comment.id} + |)|">
+                                    <form th:id="|comment-|+${comment.id}+|-delete-form|" th:action="@{/recipe/{recipeId}/comment/{commentId}/delete(recipeId=${id}, commentId=${comment.id}, page=${page}, size=${size})}" method="post"></form>
+                                    <input class="btn btn-danger" type="button" value="삭제하기" onclick="deleteComment(0)" th:onclick="|deleteComment(| + ${comment.id} + |)|">
+                                </th:block>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-none" th:id="|comment-|+${comment.id}+|-editor|" th:if="${@securityUtil.checkEditable(comment)}">
+                        <form th:action="@{/recipe/{recipeId}/comment/{commentId}/update(recipeId=${id}, commentId=${comment.id}, page=${page}, size=${size})}" method="post">
+                            <div class="form-group">
+                                <label class="d-none" for="comment-update-input">댓글 수정</label>
+                                <input type="text" class="form-control" id="comment-update-input" name="content" required th:value="${comment.content}">
+                            </div>
+                            <button type="submit" class="btn btn-primary">저장</button>
+                            <button type="button" class="btn btn-secondary" onclick="hideCommentEditor(0)" th:onclick="|hideCommentEditor(| + ${comment.id} + |)|">취소</button>
+                        </form>
+                    </div>
+                </div>
+            </th:block>
+        </div>
+        <th:block sec:authorize="isAuthenticated()">
+            <hr class="mx-2">
+            <div class="card w-100">
+                <div class="card-body">
+                    <form th:action="@{/recipe/{recipeId}/comment/new/create(recipeId=${id}, page=${page}, size=${size})}" method="post">
+                        <div class="form-group">
+                            <label for="comment-input">댓글 입력</label>
+                            <input type="text" class="form-control" id="comment-input" name="content" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">저장</button>
+                    </form>
+                </div>
+            </div>
+        </th:block>
     </div>
 </main>
 <script>
     function del() {
         document.getElementById("delete-form").submit();
+    }
+
+    function deleteComment(id) {
+        document.getElementById("comment-" + id + "-delete-form").submit();
+    }
+
+    function showCommentEditor(id) {
+        let view = $("#comment-" + id + "-view");
+        view.addClass("d-none");
+        view.removeClass("d-block");
+
+        let editor = $("#comment-" + id + "-editor");
+        editor.addClass("d-block");
+        editor.removeClass("d-none");
+    }
+
+    function hideCommentEditor(id) {
+        let view = $("#comment-" + id + "-view");
+        view.removeClass("d-none");
+        view.addClass("d-block");
+
+        let editor = $("#comment-" + id + "-editor");
+        editor.removeClass("d-block");
+        editor.addClass("d-none");
     }
 </script>
 </body>

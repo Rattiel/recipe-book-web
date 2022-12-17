@@ -12,6 +12,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
 
@@ -21,7 +22,9 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/login")
-    public String renderLoginPage() {
+    public String renderLoginPage(
+            @RequestParam(name = "redirectUrl", defaultValue = "/") String ignoredRedirectUrl
+    ) {
         return "user/login";
     }
 

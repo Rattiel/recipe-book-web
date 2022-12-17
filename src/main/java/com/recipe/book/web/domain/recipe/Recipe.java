@@ -1,5 +1,6 @@
 package com.recipe.book.web.domain.recipe;
 
+import com.recipe.book.web.domain.comment.Comment;
 import com.recipe.book.web.domain.recommendation.Recommendation;
 import com.recipe.book.web.domain.user.User;
 import com.recipe.book.web.global.config.security.Ownable;
@@ -67,6 +68,23 @@ public class Recipe implements Ownable {
     @CreatedBy
     @Column(updatable = false, nullable = false)
     private String principalName;
+
+    @OneToMany(
+            mappedBy = "recipe",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<Comment> commentList;
+
+    @Formula(
+            "(" +
+                    "SELECT count(*) " +
+                    "FROM Comment c " +
+                    "WHERE c.recipe_id = id" +
+            ")"
+    )
+    private Long commentCount;
 
     @Formula(
             "(" +
