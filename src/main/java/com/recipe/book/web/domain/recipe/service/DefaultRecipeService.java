@@ -71,10 +71,12 @@ public class DefaultRecipeService implements RecipeService {
 
         return recipeRepository.findFirst5ByCreateDateAfter(
                 lastWeek,
-                Sort.by(List.of(
-                        new Sort.Order(Sort.Direction.DESC, "recommendationCount"),
-                        new Sort.Order(Sort.Direction.DESC, "id")
-                ))
+                Sort.by(
+                        List.of(
+                            new Sort.Order(Sort.Direction.DESC, "recommendationCount"),
+                            new Sort.Order(Sort.Direction.DESC, "id")
+                        )
+                )
         );
     }
 
