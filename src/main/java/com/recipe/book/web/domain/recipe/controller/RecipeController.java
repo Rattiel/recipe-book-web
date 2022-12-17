@@ -1,24 +1,19 @@
 package com.recipe.book.web.domain.recipe.controller;
 
-import com.recipe.book.web.domain.common.exception.Fieldable;
 import com.recipe.book.web.domain.recipe.dto.*;
 import com.recipe.book.web.domain.recipe.exception.RecipeNotFoundException;
 import com.recipe.book.web.domain.recipe.service.RecipeService;
 import com.recipe.book.web.domain.recommendation.service.RecommendationService;
-import com.recipe.book.web.domain.user.dto.UserPrincipal;
 import com.recipe.book.web.global.config.security.Ownable;
 import com.recipe.book.web.global.config.security.SecurityUtil;
-import com.recipe.book.web.global.config.security.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -158,13 +153,12 @@ public class RecipeController {
     @GetMapping("/{id}")
     public String renderView(
             @PathVariable Long id,
-            Model model,
-            @AuthenticationPrincipal UserPrincipal userPrincipal
+            Model model
     ) {
         RecipeView recipe = recipeService.findById(id);
         bindView(recipe, model);
         bindEditable(recipe, model);
-        bindRecommended(id, userPrincipal, model);
+        bindRecommended(id, model);
 
         return "recipe/view";
     }
@@ -174,8 +168,8 @@ public class RecipeController {
         model.addAttribute("editable", editable);
     }
 
-    private void bindRecommended(long recipeId, UserPrincipal details, Model model) {
-        boolean recommended = recommendationService.isRecommended(recipeId, details);
+    private void bindRecommended(long recipeId, Model model) {
+        boolean recommended = recommendationService.isRecommended(recipeId);
         model.addAttribute("recommended", recommended);
     }
 
@@ -216,10 +210,5 @@ public class RecipeController {
 
     private void bindView(RecipeView view, Model model) {
         model.addAttribute("view", view);
-    }
-
-    private void bindFieldError(BindingResult bindingResult, Fieldable e) {
-        FieldError fieldError = new FieldError("form", e.getField(), e.getReason());
-        bindingResult.addError(fieldError);
     }
 }

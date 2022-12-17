@@ -19,7 +19,7 @@ public class SecurityUtil {
         UserDetails userDetails = getUserPrincipal();
 
         return userRepository.findByUsername(userDetails.getUsername())
-                .orElseThrow(() -> {throw new AccessDeniedException("사용자 정보 불러오기 실패(이유: 인증 안됌)");});
+                .orElseThrow(() -> {throw new AccessDeniedException("사용자 정보 불러오기 실패(이유: 존재하지 않는 사용자)");});
     }
 
     public boolean checkEditable(Ownable data) {

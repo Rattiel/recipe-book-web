@@ -7,6 +7,7 @@ import com.recipe.book.web.domain.recommendation.Recommendation;
 import com.recipe.book.web.domain.recommendation.repository.RecommendationRepository;
 import com.recipe.book.web.domain.user.User;
 import com.recipe.book.web.domain.user.repository.UserRepository;
+import com.recipe.book.web.global.config.security.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,17 +23,13 @@ public class DefaultRecommendationService implements RecommendationService {
     private final RecommendationRepository recommendationRepository;
     private final RecipeRepository recipeRepository;
 
-    private final UserRepository userRepository;
+    private final SecurityUtil securityUtil;
 
     @Override
-    public void create(long recipeId, UserDetails userDetails) {
-        User user = findUser(userDetails.getUsername());
+    public void create(long recipeId) {
+        User user = securityUtil.getUser();
 
-        if (!recipeRepository.existsById(recipeId)) {
-            throw new RecipeNotFoundException();
-        }
-
-        Recipe recipe = Recipe.withId(recipeId);
+        Recipe recipe = findRecipe(recipeId);
 
         if (!recommendationRepository.existsByOwnerAndRecipe(user, recipe)) {
             Recommendation recommendation = Recommendation.create(user, recipe);
@@ -42,14 +39,10 @@ public class DefaultRecommendationService implements RecommendationService {
     }
 
     @Override
-    public void delete(long recipeId, UserDetails userDetails) {
-        User user = findUser(userDetails.getUsername());
+    public void delete(long recipeId) {
+        User user = securityUtil.getUser();
 
-        if (!recipeRepository.existsById(recipeId)) {
-            throw new RecipeNotFoundException();
-        }
-
-        Recipe recipe = Recipe.withId(recipeId);
+        Recipe recipe = findRecipe(recipeId);
 
         Optional<Recommendation> recommendationOptional = recommendationRepository.findByOwnerAndRecipe(user, recipe);
 
@@ -57,24 +50,18 @@ public class DefaultRecommendationService implements RecommendationService {
     }
 
     @Override
-    public boolean isRecommended(long recipeId, UserDetails userDetails) {
-        if (userDetails == null) {
+    public boolean isRecommended(long recipeId) {
+        try {
+            User user = securityUtil.getUser();
+            Recipe recipe = findRecipe(recipeId);
+            return recommendationRepository.existsByOwnerAndRecipe(user, recipe);
+        } catch (AccessDeniedException e) {
             return false;
         }
-
-        User user = findUser(userDetails.getUsername());
-
-        if (!recipeRepository.existsById(recipeId)) {
-            throw new RecipeNotFoundException();
-        }
-
-        Recipe recipe = Recipe.withId(recipeId);
-
-        return recommendationRepository.existsByOwnerAndRecipe(user, recipe);
     }
 
-    private User findUser(String username) {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new AccessDeniedException("사용자 정보 불러오기 실패(이유: 인증 안됌)"));
+    private Recipe findRecipe(long recipeId) {
+        return recipeRepository.findById(recipeId)
+                .orElseThrow(RecipeNotFoundException::new);
     }
 }

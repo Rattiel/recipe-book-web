@@ -23,7 +23,6 @@ import java.util.List;
 @Service
 public class DefaultRecipeService implements RecipeService {
     private final RecipeRepository recipeRepository;
-
     private final SecurityUtil securityUtil;
 
     @Override
@@ -38,23 +37,15 @@ public class DefaultRecipeService implements RecipeService {
     }
 
     @Override
-    public long update(
-            long id,
-            String title,
-            List<String> thumbnails,
-            String content
-    ) {
+    public long update(long id, String title, List<String> thumbnails, String content) {
         Recipe recipe = find(id);
-
         recipe.update(title, thumbnails, content);
-
         return recipe.getId();
     }
 
     @Override
     public void delete(long id) {
         Recipe recipe = find(id);
-
         recipeRepository.delete(recipe);
     }
 
@@ -69,10 +60,8 @@ public class DefaultRecipeService implements RecipeService {
     public List<RecipePreview> findPreviewListByTop5InWeek() {
         LocalDateTime lastWeek = LocalDateTime.now().minusWeeks(1);
 
-        return recipeRepository.findFirst5ByCreateDateAfter(
-                lastWeek,
-                Sort.by(
-                        List.of(
+        return recipeRepository.findFirst5ByCreateDateAfter(lastWeek,
+                Sort.by(List.of(
                             new Sort.Order(Sort.Direction.DESC, "recommendationCount"),
                             new Sort.Order(Sort.Direction.DESC, "id")
                         )
@@ -90,7 +79,6 @@ public class DefaultRecipeService implements RecipeService {
     @Override
     public RecipeView findById(long id) {
         recipeRepository.updateViewsById(id);
-
         return recipeRepository.findViewById(id)
                 .orElseThrow(RecipeNotFoundException::new);
     }

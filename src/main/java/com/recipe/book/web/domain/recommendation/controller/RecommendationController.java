@@ -7,8 +7,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.HandlerMapping;
@@ -65,10 +63,9 @@ public class RecommendationController {
     @GetMapping("/create")
     public String requestCreate(
             @PathVariable Long recipeId,
-            @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
-            @AuthenticationPrincipal UserDetails userDetails
+            @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        recommendationService.create(recipeId, userDetails);
+        recommendationService.create(recipeId);
 
         return redirectRecipe(recipeId, pageable);
     }
@@ -76,10 +73,9 @@ public class RecommendationController {
     @GetMapping("/delete")
     public String requestDelete(
             @PathVariable Long recipeId,
-            @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
-            @AuthenticationPrincipal UserDetails userDetails
+            @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        recommendationService.delete(recipeId, userDetails);
+        recommendationService.delete(recipeId);
 
         return redirectRecipe(recipeId, pageable);
     }

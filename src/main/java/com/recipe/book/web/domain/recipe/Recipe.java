@@ -44,21 +44,10 @@ public class Recipe implements Ownable {
     @Column(updatable = false, nullable = false)
     private LocalDateTime createDate;
 
-    @Formula(
-            "(" +
-                    "SELECT count(*) " +
-                    "FROM Recommendation rec " +
-                    "WHERE rec.recipe_id = id" +
-            ")"
-    )
+    @Formula("(SELECT count(*) FROM Recommendation rec WHERE rec.recipe_id = id)")
     private Long recommendationCount;
 
-    @OneToMany(
-            mappedBy = "recipe",
-            fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
+    @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Recommendation> recommendations;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -69,48 +58,17 @@ public class Recipe implements Ownable {
     @Column(updatable = false, nullable = false)
     private String principalName;
 
-    @OneToMany(
-            mappedBy = "recipe",
-            fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
+    @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> commentList;
 
-    @Formula(
-            "(" +
-                    "SELECT count(*) " +
-                    "FROM Comment c " +
-                    "WHERE c.recipe_id = id" +
-            ")"
-    )
+    @Formula("(SELECT count(*) FROM Comment c WHERE c.recipe_id = id)")
     private Long commentCount;
 
-    @Formula(
-            "(" +
-                    "SELECT r.id " +
-                    "FROM Recipe r " +
-                    "WHERE r.id > id " +
-                    "ORDER BY r.id asc LIMIT 1" +
-            ")"
-    )
+    @Formula("(SELECT r.id FROM Recipe r WHERE r.id > id ORDER BY r.id asc LIMIT 1)")
     private Long after;
 
-    @Formula(
-            "(" +
-                    "SELECT r.id " +
-                    "FROM Recipe r " +
-                    "WHERE r.id < id " +
-                    "ORDER BY r.id desc LIMIT 1" +
-            ")"
-    )
+    @Formula("(SELECT r.id FROM Recipe r WHERE r.id < id ORDER BY r.id desc LIMIT 1)")
     private Long before;
-
-    public static Recipe withId(Long id) {
-        return Recipe.builder()
-                .id(id)
-                .build();
-    }
 
     public static Recipe create(String title, User writer, List<String> thumbnails, String content) {
         return Recipe.builder()
