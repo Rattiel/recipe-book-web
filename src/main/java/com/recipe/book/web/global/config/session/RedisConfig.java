@@ -1,4 +1,4 @@
-package com.recipe.book.web.global.config;
+package com.recipe.book.web.global.config.session;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

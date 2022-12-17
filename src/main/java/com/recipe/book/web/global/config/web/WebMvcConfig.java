@@ -1,4 +1,4 @@
-package com.recipe.book.web.global.config;
+package com.recipe.book.web.global.config.web;
 
 import com.recipe.book.web.global.config.session.SessionSessionArgumentResolver;
 import lombok.RequiredArgsConstructor;
