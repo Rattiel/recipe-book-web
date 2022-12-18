@@ -44,7 +44,7 @@
                                 <td class="date" th:text="${#temporals.format(view.createDate, 'HH:mm')}">작성일</td>
                             </th:block>
                             <th:block th:if="!${view.createDate.isAfter(yesterday)}">
-                                <td class="date" th:text="${#temporals.format(view.createDate, 'dd-MM')}">작성일</td>
+                                <td class="date" th:text="${#temporals.format(view.createDate, 'MM-dd')}">작성일</td>
                             </th:block>
                         </tr>
                         <tr><td>댓글수</td><td th:utext="*{commentCount}"></td></tr>
@@ -91,7 +91,7 @@
                                     <p th:text="${#temporals.format(comment.createDate, 'HH:mm')}">작성일</p>
                                 </th:block>
                                 <th:block th:unless="${comment.createDate.isAfter(yesterday)}">
-                                    <p th:text="${#temporals.format(comment.createDate, 'dd-MM')}">작성일</p>
+                                    <p th:text="${#temporals.format(comment.createDate, 'MM-dd')}">작성일</p>
                                 </th:block>
                             </div>
                         </div>

@@ -30,7 +30,7 @@
                     <th class="d-none d-sm-table-cell"  th:text="${#temporals.format(preview.createDate, 'HH:mm')}">작성일</th>
                 </th:block>
                 <th:block th:unless="${preview.createDate.isAfter(yesterday)}">
-                    <th class="d-none d-sm-table-cell"  th:text="${#temporals.format(preview.createDate, 'dd-MM')}">작성일</th>
+                    <th class="d-none d-sm-table-cell"  th:text="${#temporals.format(preview.createDate, 'MM-dd')}">작성일</th>
                 </th:block>
             </tr>
         </table>
@@ -53,7 +53,7 @@
                                        <p class="my-1" th:text="${#temporals.format(preview.createDate, 'HH:mm')}">작성일</p>
                                    </th:block>
                                    <th:block th:if="!${preview.createDate.isAfter(yesterday)}">
-                                       <p class="my-1" th:text="${#temporals.format(preview.createDate, 'dd-MM')}">작성일</p>
+                                       <p class="my-1" th:text="${#temporals.format(preview.createDate, 'MM-dd')}">작성일</p>
                                    </th:block>
                                </div>
                             </div>
