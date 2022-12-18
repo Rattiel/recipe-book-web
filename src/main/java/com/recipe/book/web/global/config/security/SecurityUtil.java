@@ -19,7 +19,7 @@ public class SecurityUtil {
         UserDetails userDetails = getUserPrincipal();
 
         return userRepository.findByUsername(userDetails.getUsername())
-                .orElseThrow(() -> {throw new AccessDeniedException("사용자 정보 불러오기 실패(이유: 존재하지 않는 사용자)");});
+                .orElseThrow(() -> new AccessDeniedException("사용자 정보 불러오기 실패(이유: 존재하지 않는 사용자)"));
     }
 
     public boolean checkEditable(Ownable data) {
@@ -31,7 +31,7 @@ public class SecurityUtil {
             } else {
                 return data.getPrincipalName().equals(userPrincipal.getUsername());
             }
-        } catch (AccessDeniedException | ClassCastException e) {
+        } catch (AccessDeniedException e) {
             return false;
         }
     }
@@ -49,6 +49,6 @@ public class SecurityUtil {
             return userPrincipal;
         }
 
-        throw new ClassCastException("사용자 아이디 가져오기 실패(이유: UserDetails 로 형변환 실패)");
+        throw new ClassCastException("사용자 아이디 가져오기 실패(이유: UserPrincipal 로 형변환 실패)");
     }
 }

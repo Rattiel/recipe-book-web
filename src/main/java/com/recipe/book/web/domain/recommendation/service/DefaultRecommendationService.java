@@ -22,18 +22,14 @@ import java.util.Optional;
 public class DefaultRecommendationService implements RecommendationService {
     private final RecommendationRepository recommendationRepository;
     private final RecipeRepository recipeRepository;
-
     private final SecurityUtil securityUtil;
 
     @Override
     public void create(long recipeId) {
         User user = securityUtil.getUser();
-
         Recipe recipe = findRecipe(recipeId);
-
         if (!recommendationRepository.existsByOwnerAndRecipe(user, recipe)) {
             Recommendation recommendation = Recommendation.create(user, recipe);
-
             recommendationRepository.save(recommendation);
         }
     }
@@ -41,11 +37,8 @@ public class DefaultRecommendationService implements RecommendationService {
     @Override
     public void delete(long recipeId) {
         User user = securityUtil.getUser();
-
         Recipe recipe = findRecipe(recipeId);
-
         Optional<Recommendation> recommendationOptional = recommendationRepository.findByOwnerAndRecipe(user, recipe);
-
         recommendationOptional.ifPresent(recommendationRepository::delete);
     }
 
@@ -61,7 +54,6 @@ public class DefaultRecommendationService implements RecommendationService {
     }
 
     private Recipe findRecipe(long recipeId) {
-        return recipeRepository.findById(recipeId)
-                .orElseThrow(RecipeNotFoundException::new);
+        return recipeRepository.findById(recipeId).orElseThrow(RecipeNotFoundException::new);
     }
 }

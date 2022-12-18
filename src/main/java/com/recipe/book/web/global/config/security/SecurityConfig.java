@@ -16,14 +16,8 @@ import org.springframework.security.web.header.writers.frameoptions.XFrameOption
 @Slf4j
 @RequiredArgsConstructor
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(
-		prePostEnabled = true,
-		securedEnabled = true,
-		jsr250Enabled = true
-)
 public class SecurityConfig {
 	private final SessionLoginSuccessHandler loginSuccessHandler;
-
 	private final LogoutSuccessHandler logoutSuccessHandler;
 
 	@Bean

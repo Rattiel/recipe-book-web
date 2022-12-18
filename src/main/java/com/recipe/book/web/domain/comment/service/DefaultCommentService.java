@@ -17,9 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class DefaultCommentService implements CommentService {
     private final CommentRepository commentRepository;
-
     private final RecipeRepository recipeRepository;
-
     private final SecurityUtil securityUtil;
 
     @Override
@@ -47,7 +45,6 @@ public class DefaultCommentService implements CommentService {
     @Override
     public void delete(long id) {
         Comment comment = findComment(id);
-
         commentRepository.delete(comment);
     }
 

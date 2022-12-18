@@ -9,13 +9,11 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @Slf4j
-@ControllerAdvice(
-        assignableTypes = {
-                BaseController.class,
-                UserController.class,
-                RecipeController.class
-        }
-)
+@ControllerAdvice(assignableTypes = {
+        BaseController.class,
+        UserController.class,
+        RecipeController.class
+})
 @Controller
 public class ExceptionAdviceController {
     @ExceptionHandler({
