@@ -61,9 +61,9 @@ public class CommentController {
             return String.format(
                     "redirect:/recipe/%d?page=%d&size=%d#comment-%d",
                     recipeId,
-                    commentId,
                     pageable.getPageNumber(),
-                    pageable.getPageSize()
+                    pageable.getPageSize(),
+                    commentId
             );
         }
     }

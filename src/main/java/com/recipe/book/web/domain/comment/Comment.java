@@ -38,7 +38,7 @@ public class Comment implements Ownable {
     @JoinColumn(updatable = false, nullable = false)
     private Recipe recipe;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(updatable = false, nullable = false)
     private User writer;
 

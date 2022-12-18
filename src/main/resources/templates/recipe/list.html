@@ -46,13 +46,17 @@
                         <img class="bd-placeholder-img card-img-top" style="width:100%; height:225px;" th:src="${preview.thumbnails[0]}">
                         <div class="card-body">
                             <p class="my-1" th:text="${preview.title}">제목</p>
-                            <p class="my-1" th:text="${preview.writer.nickname}">작성자</p>
-                            <th:block th:if="${preview.createDate.isAfter(yesterday)}">
-                                <p class="my-1" th:text="${#temporals.format(preview.createDate, 'HH:mm')}">작성일</p>
-                            </th:block>
-                            <th:block th:if="!${preview.createDate.isAfter(yesterday)}">
-                                <p class="my-1" th:text="${#temporals.format(preview.createDate, 'dd-MM')}">작성일</p>
-                            </th:block>
+                            <div class="container">
+                               <div class="row justify-content-between">
+                                   <p class="my-1" th:text="${preview.writer.nickname}">작성자</p>
+                                   <th:block th:if="${preview.createDate.isAfter(yesterday)}">
+                                       <p class="my-1" th:text="${#temporals.format(preview.createDate, 'HH:mm')}">작성일</p>
+                                   </th:block>
+                                   <th:block th:if="!${preview.createDate.isAfter(yesterday)}">
+                                       <p class="my-1" th:text="${#temporals.format(preview.createDate, 'dd-MM')}">작성일</p>
+                                   </th:block>
+                               </div>
+                            </div>
                         </div>
                     </a>
                 </div>

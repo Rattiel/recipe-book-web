@@ -16,10 +16,14 @@ public class SecurityUtil {
     private final UserRepository userRepository;
 
     public User getUser() {
-        UserDetails userDetails = getUserPrincipal();
+        try {
+            UserDetails userDetails = getUserPrincipal();
 
-        return userRepository.findByUsername(userDetails.getUsername())
-                .orElseThrow(() -> new AccessDeniedException("사용자 정보 불러오기 실패(이유: 존재하지 않는 사용자)"));
+            return userRepository.findByUsername(userDetails.getUsername())
+                    .orElseThrow(() -> new AccessDeniedException("사용자 정보 불러오기 실패(이유: 존재하지 않는 사용자)"));
+        } catch (ClassCastException e) {
+            throw new AccessDeniedException(e.getMessage());
+        }
     }
 
     public boolean checkEditable(Ownable data) {
@@ -31,7 +35,7 @@ public class SecurityUtil {
             } else {
                 return data.getPrincipalName().equals(userPrincipal.getUsername());
             }
-        } catch (AccessDeniedException e) {
+        } catch (AccessDeniedException | ClassCastException e) {
             return false;
         }
     }
